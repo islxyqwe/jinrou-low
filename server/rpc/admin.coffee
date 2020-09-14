@@ -3,6 +3,11 @@ crypto=require('crypto')
 child_process=require('child_process')
 settings=Config.mongo
 
+libblacklist = require '../libs/blacklist.coffee'
+libi18n      = require '../libs/i18n.coffee'
+
+i18n = libi18n.getWithDefaultNS 'admin'
+
 # twitter系
 oauth=require './../oauth.coffee'
 exports.actions =(req,res,ss)->
@@ -20,61 +25,45 @@ exports.actions =(req,res,ss)->
             flag=true
 
         unless flag
-            res "管理员密码错误。"
+            res i18n.t "error.wrongPassword"
         else
             req.session.save ->res null
 
     # ------------- blacklist関係
-    # blacklist一览を得る
     getBlacklist:(query)->
+        # blacklist一覧を得る
         unless req.session.administer
-            res {error:"不是管理员"}
+            res {error: i18n.t "error.notAdmin"}
             return
         M.blacklist.find().limit(100).skip(100*(query.page ? 0)).toArray (err,docs)->
-            res {docs:docs}
+            M.blacklist.count (err, count)->
+                res {docs:docs,page:query.page ? 0,total:Math.ceil(count/100)}
     addBlacklist:(query)->
+        # blacklistに新しいのを追加
         unless req.session.administer
-            res {error:"不是管理员"}
+            res {error: i18n.t "error.notAdmin"}
             return
-        M.users.findOne {userid:query.userid},(err,doc)->
-            unless doc?
-                res {error:"没有发现这个用户"}
-                return
-            addquery=
-                userid:doc.userid
-                ip:doc.ip
-            M.blacklist.findOne {userid:query.userid},(err,doc)->
-                unless doc?
-                    if query.expire=="some"
-                        d=new Date()
-                        addquery.timestamp=d.getTime()
-                        d.setMonth d.getMonth()+parseInt query.month
-                        d.setDate d.getDate()+parseInt query.day
-                        d.setHours d.getHours()+parseInt query.hour
-                        addquery.expires=d
-                    M.blacklist.insert addquery,{safe:true},(err,doc)->
-                        res null
-                    return
-                if query.expire=="some"
-                    d=doc.expires
-                    addquery.timestamp=d.getTime()
-                    d.setMonth d.getMonth()+parseInt query.month
-                    d.setDate d.getDate()+parseInt query.day
-                    d.setHours d.getHours()+parseInt query.hour
-                    addquery.expires=d
-                M.blacklist.update {userid:query.userid},{$set:{expires:addquery.expires}},{safe:true},(err,doc)->
-                    res null
+        libblacklist.addBlacklist query, res
+        # 即時反映（居れば）
+        ss.publish.user query.userid, "forcereload"
     removeBlacklist:(query)->
+        # blacklistを1つ解除
         unless req.session.administer
-            res {error:"不是管理员"}
+            res {error: i18n.t "error.notAdmin"}
             return
-        M.blacklist.remove {userid:query.userid},(err)->
-            res null
-    
+        libblacklist.forgive query.id, (err)->
+            res err
+    restoreBlacklist:(query)->
+        # 解除されたblacklistをもどす
+        unless req.session.administer
+            res {error: i18n.t "error.notAdmin"}
+            return
+        libblacklist.restore query.id, (err)->
+            res err
     # -------------- grandalert関係
     spreadGrandalert:(query)->
         unless req.session.administer
-            res {error:"不是管理员"}
+            res {error: i18n.t "error.notAdmin"}
             return
         if query.system
             message=
@@ -88,17 +77,17 @@ exports.actions =(req,res,ss)->
     # -------------- dataexport関係
     dataExport:(query)->
         unless query?
-            res {error:"检索无效"}
+            res {error: i18n.t "common:error.invalidInput"}
             return
         unless Config.admin.securityHole
-            res {error:"后门已关闭"}
+            res {error: i18n.t "error.unavailable"}
             return
 
         sha256=crypto.createHash "sha256"
         sha256.update query.pass
         phrase=sha256.digest 'hex'
         unless phrase=='d77696ef7b89048f9e68d671da5fc825f9f2e9791fcef52c4c482d608beb49e2'
-            res {error:"口令错误"}
+            res {error: i18n.t "error.wrongPassword"}
             return
         child = child_process.exec "mongodump -d #{settings.database} -u #{settings.user} -p #{settings.pass} -o ./public/dump", (error,stdout,stderr)->
             if error?
@@ -116,10 +105,10 @@ exports.actions =(req,res,ss)->
     doCommand:(query)->
         # 僕だけだよ！ あの文字列を送ろう
         unless query?
-            res {error:"检索无效"}
+            res {error: i18n.t "common:error.invalidInput"}
             return
         unless Config.admin.securityHole
-            res {error:"后门已关闭"}
+            res {error: i18n.t "error.unavailable"}
             return
         if pro?
             # まだ起動している
@@ -129,7 +118,7 @@ exports.actions =(req,res,ss)->
         sha256.update query.pass
         phrase=sha256.digest 'hex'
         unless phrase=='d77696ef7b89048f9e68d671da5fc825f9f2e9791fcef52c4c482d608beb49e2'
-            res {error:"口令错误"}
+            res {error: i18n.t "error.wrongPassword"}
             return
         if query.command=="show_dbinfo"
             res result:"#{settings.database}:#{settings.user}:#{settings.pass}"
@@ -142,10 +131,10 @@ exports.actions =(req,res,ss)->
             res {result:stdout}
     startProcess:(cmd)->
         if pro?
-            res {error:"进程正在启动"}
+            res {error: i18n.t "error.unavailable"}
             return
         unless typeof cmd=="string"
-            res {error:"命令无效"}
+            res {error: i18n.t "common:error.invalidInput"}
             return
         args=cmd.split " "
         comm=args.shift()
@@ -153,7 +142,7 @@ exports.actions =(req,res,ss)->
     #-- 更新
     update:->
         unless req.session.maintenance
-            res {error:"不是管理员"}
+            res {error: i18n.t "error.notAdmin"}
             return
         script=Config.maintenance.script ? []
         result=""
@@ -176,7 +165,7 @@ exports.actions =(req,res,ss)->
         one 0
     end:->
         unless req.session.maintenance
-            res {error:"不是管理员"}
+            res {error: i18n.t "error.notAdmin"}
             return
         process.exit()
         res {}
@@ -185,13 +174,13 @@ exports.actions =(req,res,ss)->
     # news一览を得る
     getNews:(query)->
         unless req.session.maintenance
-            res {error:"不是管理员"}
+            res {error: i18n.t "error.notAdmin"}
             return
         M.news.find().sort({time:-1}).limit(query.num).toArray (err,docs)->
             res {docs:docs}
     addNews:(query)->
         unless req.session.maintenance
-            res {error:"不是管理员"}
+            res {error: i18n.t "error.notAdmin"}
             return
         addquery=
             time:new Date()

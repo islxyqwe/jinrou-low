@@ -1,8 +1,12 @@
-section.window
-  h1
-    | 登陆
-    button.closer(type="button",name="cancel")
-      i.fa.fa-times
+extends winskeleton
+block icon
+  i.fa.fa-user
+block title
+  | 登录
+block closebutton
+  button.closer(type="button",name="cancel")
+    i.fa.fa-times
+block wincontent
   form(aciton="/")#loginform
     p
       label
@@ -11,11 +15,11 @@ section.window
     p
       label
         | 密码
-        input(type="password",size="30",name="password",pattern="\\\\w+",required)
+        input(type="password",size="30",name="password",pattern="[\\\\x20-\\\\x7e]+",required,autocomplete="current-password")
     p
-      input(type="submit",value="登陆")
+      input(type="submit",value="登录")
       label
-        | 记住登陆状态
+        | 记住登录状态
         input(type="checkbox",name="remember_me",checked)
     p#loginerror.error
   h2 注册
@@ -27,7 +31,7 @@ section.window
     p
       label
         | 密码
-        input(type="password",size="30",name="password",required)
+        input(type="password",size="30",name="password",required,autocomplete="new-password")
     p
       input(type="submit",value="注册")
     p#newentryerror.error

@@ -8,12 +8,35 @@ exports.showWindow=showWindow=(templatename,tmpl)->
     x=Math.max 50,sclf+Math.floor(Math.random()*100-200+document.documentElement.clientWidth/2)
     y=Math.max 50,sctp+Math.floor(Math.random()*100-200+document.documentElement.clientHeight/2)
 
+    # iconはspecialにhandleする
+    unless tmpl?
+        tmpl = {}
+    tmpl.title ?= ""
+    tmpl.icon = makeIconHTML tmpl.icon
+
     win=$(JT["#{templatename}"](tmpl)).hide().css({left:"#{x}px",top:"#{y}px",}).appendTo("body").fadeIn().draggable()
     $(".getfocus",win.get(0)).focus()
     win
+
+makeIconHTML = (icon)->
+    unless icon?
+        return ''
+    if 'string' == typeof icon
+        return FontAwesome.icon({iconName: icon}).html
+    if icon instanceof Array
+        result = "<span class='fa-stack'>"
+        for name in icon
+            result += FontAwesome.icon({iconName: name}).html
+        result += "</span>"
+        return result
+    return ''
+
+
+
+
 #編集域を返す
-exports.blankWindow=(title)->
-    win=showWindow "util-blank", {title: title}
+exports.blankWindow=(options, onclose)->
+    win=showWindow "util-blank", options
     div=document.createElement "div"
     div.classList.add "window-content"
     $("form[name='okform']",win).before div
@@ -23,6 +46,7 @@ exports.blankWindow=(title)->
         while t?
             if t.name=="ok"
                 closeWindow t
+                onclose?()
                 break
             t = t.parentNode
     $(div)
@@ -84,45 +108,21 @@ exports.prompt=(title,message,opt,cb)->
                 break
             t = t.parentNode
 
-#猝死惩罚
-exports.punish=(title,message,cb)->
-    win = showWindow "util-punish",{title:title,time:message.time}
-    for user in message.userlist
-        a = document.createElement "input"
-        a.type="checkbox"
-        a.name="userList"
-        a.class="punish"
-        a.value=user.userid
-        b = document.createElement "label"
-        $(b).append(a).append(user.name)
-        $("#prePunishUser").append(b).append("<br>")
-
-    ipt =->
-        # console.log("punish表单")
-        # console.log(document.punish.userList)
-        user=document.punish.userList;
-        userChecked=[];
-        if !user[0]
-            a=[]
-            a.push user
-            user=a
-        for pl in user
-            if pl.checked then userChecked.push pl.value
-        # console.log(userChecked)
-        userChecked
-    win.submit (je)-> je.preventDefault()
-    win.click (je)->
-        t=je.target
-        if t.name=="ok"
-            cb? ipt()
-            closeWindow t
-        else if t.name=="cancel"
-            # cb? null
-            closeWindow t
 
 #arr: [{name:"aaa",value:"foo"}, ...]
-exports.selectprompt=(title,message,arr,cb)->
-    win = showWindow "util-selectprompt",{title:title,message:message}
+exports.selectprompt=(options,cb)->
+    {
+        title,
+        message,
+        options: arr,
+        icon,
+    } = options
+
+    win = showWindow "util-selectprompt",{
+        title: title
+        message: message
+        icon: icon
+    }
     sel=win.find("select.prompt").get(0)
     for obj in arr
         opt=document.createElement "option"
@@ -142,8 +142,47 @@ exports.selectprompt=(title,message,arr,cb)->
                 closeWindow t
                 break
             t = t.parentNode
-        
+exports.kickprompt=(options,cb)->
+    {
+        title,
+        message,
+        options: arr,
+        icon,
+    } = options
 
+    win = showWindow "util-kick",{
+        title: title ? "踢出"
+        message: message ? "请选择要被踢出的人"
+        icon: icon ? 'user-times'
+    }
+    sel=win.find("select.prompt").get(0)
+    for obj in arr
+        opt=document.createElement "option"
+        opt.textContent=obj.name
+        opt.value=obj.value
+        sel.add opt
+    win.submit (je)-> je.preventDefault()
+    win.click (je)->
+        t=je.target
+        while t?
+            if t.name=="ok"
+                cb? {
+                    value: sel.value
+                    ban: win.find('input[name="noentry"]').get(0).checked
+                }
+                closeWindow t
+                break
+            else if t.name=="cancel"
+                cb? null
+                closeWindow t
+                break
+            else if t.name=="list"
+                cb? {
+                    list: true
+                }
+                closeWindow t
+                break
+            t = t.parentNode
 
 exports.message=(title,message,cb)->
     win = showWindow "util-wmessage",{title:title,message:message}
@@ -212,7 +251,7 @@ exports.iconSelectWindow=(def,cb)->
     form=$("#iconform").get 0
     # 头像决定
     okicon=(url)->
-        $("#selecticondisp").attr "src",url
+        setHTTPSicon $("#selecticondisp").get(0), url
         def=url # 書き換え
         
     okicon def  # さいしょ
@@ -248,7 +287,11 @@ exports.iconSelectWindow=(def,cb)->
         closeWindow win
         cb def  #结果通知
 exports.blindName=(opt={},cb)->
-    win = showWindow "util-blindname",{title:opt.title ? "加入游戏", message:opt.message ? "请输入昵称"}
+    win = showWindow "util-blindname",{
+        title:opt.title ? "加入游戏"
+        message:opt.message ? "请输入昵称"
+        icon: "user-secret"
+    }
     def=null
     win.click (je)->
         t=je.target
@@ -265,23 +308,8 @@ exports.blindName=(opt={},cb)->
             t = t.parentNode
     $("#nameform").submit (je)->
         je.preventDefault()
-        #max bytes of blind name
-        maxLength=20
-
-        je.target.elements["name"].value = je.target.elements["name"].value.trim()
-        if je.target.elements["name"].value.trim() == ''
-            util.message "错误","昵称不能仅为空格。"
-        else if je.target.elements["name"].value.replace(/[^\x00-\xFF]/g,'**').length <= maxLength
-            closeWindow win
-            cb {name:je.target.elements["name"].value, icon:def}
-        else
-            byteSub = (str, maxLength) ->
-              str = str.substr(0, str.length - 1)  while str.replace(/[^\x00-\xFF]/g, "**").length > maxLength
-              str
-            je.target.elements["name"].value = byteSub(je.target.elements["name"].value, maxLength)
-            util.message "错误","昵称不能超过"+maxLength+"个字节。"
-    
-        
+        closeWindow win
+        cb {name:je.target.elements["name"].value, icon:def}        
 
 # Dateをtime要素に
 exports.timeFromDate=(date)->
@@ -293,3 +321,93 @@ exports.timeFromDate=(date)->
     time.datetime="#{dat}T#{tim}+09:00"
     time.textContent="#{dat} #{tim}"
     time
+
+# search文字列をdictに
+exports.searchHash=(search)->
+    result = {}
+    arr = search.slice(1).split '&'
+    for chunk in arr
+        continue unless chunk
+        [key, value] = chunk.split '='
+        result[decodeURIComponent key] = decodeURIComponent(value ? 'on')
+    return result
+exports.hashSearch=(hash)->
+    arr = []
+    for key, value of hash
+        arr.push "#{encodeURIComponent key}=#{encodeURIComponent value}"
+    if arr.length == 0
+        return ''
+    else
+        return "?#{arr.join '&'}"
+
+# HTTPS優先iconを表示
+exports.setHTTPSicon = setHTTPSicon = (img, url, cacheObject)->
+    if cacheObject?[url]?
+        # If this url is already cached, use it.
+        img.src = cacheObject?[url]
+        return
+    original_url = url
+    # HTTPSに直す
+    if /^http:/.test url
+        url = "https:" + url.slice 5
+        # HTTPSが错误だったらHTTPになる
+        handler1 = (ev)->
+            img.removeEventListener "error", handler1, false
+            img.removeEventListener "load", handler2, false
+            cacheObject?[original_url] = original_url
+            img.src = original_url
+        handler2 = ()->
+            img.removeEventListener "error", handler1, false
+            img.removeEventListener "load", handler2, false
+            cacheObject?[original_url] = url
+        img.addEventListener "error", handler1, false
+        img.addEventListener "load", handler2, false
+    # URLをset
+    img.src = url
+
+# Font Awesomeアイコンを一時的にloadingに変える
+exports.LoadingIcon = class LoadingIcon
+    constructor:(@icon)->
+        # spinnerアイコンを作成
+        @newicon = FontAwesome.icon({iconName: 'spinner'}, {
+            classes: ['fa-fw', 'fa-pulse', 'fa-spinner']
+        }).node[0]
+    start:()->
+        # 一時的に古いアイコンを隠す
+        @icon.parentNode.replaceChild @newicon, @icon
+    stop:()->
+        # 戻す
+        @newicon.parentNode.replaceChild @icon, @newicon
+
+#猝死惩罚
+exports.punish=(title,message,cb)->
+    win = showWindow "util-punish",{title:title,time:message.time}
+    for user in message.userlist
+        a = document.createElement "input"
+        a.type="checkbox"
+        a.name="userList"
+        a.class="punish"
+        a.value=user.userid
+        b = document.createElement "label"
+        $(b).append(a).append(user.name)
+        $("#prePunishUser").append(b).append("<br>")
+
+    ipt =->
+        user=document.punish.userList
+        userChecked=[]
+        if !user[0]
+            a=[]
+            a.push user
+            user=a
+        for pl in user
+            if pl.checked then userChecked.push pl.value
+        userChecked
+    win.submit (je)-> je.preventDefault()
+    win.click (je)->
+        t=je.target
+        if t.name=="ok"
+            cb? ipt()
+            closeWindow t
+        else if t.name=="cancel"
+            # cb? null
+            closeWindow t

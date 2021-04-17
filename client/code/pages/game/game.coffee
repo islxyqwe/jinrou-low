@@ -314,6 +314,8 @@ exports.start=(roomid)->
                             listenerNumber: obj.listenerNumber
                             loreleis: obj.loreleis
                             gamblerStock: obj.gamblerStock
+                            bonds: obj.bonds
+                            spaceWerewolfImposters: obj.spaceWerewolfImposters
                         }
                     else
                         null

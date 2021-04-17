@@ -154,6 +154,21 @@ jobname:
   Gambler: '赌徒'
   Faker: '老千'
   SealWolf: '印狼'
+  CynthiaWolf: '月狼'
+  Trickster: '恶作剧妖精'
+  Sleepwalker: '梦游患者'
+  Disguised: '变装者'
+  Oni: '鬼'
+  Saint: '圣子'
+  NetherWolf: '冥狼'
+  DarkWolf: '暗狼'
+  Acrobat: '杂耍艺人'
+  Hanami: '赏花客'
+  SpaceWerewolfCrew: '宇航员'
+  SpaceWerewolfImposter: '诈欺师'
+  SpaceWerewolfObserver: '观察者'
+  SpaceWerewolfGuard: '警戒员'
+  SpaceWerewolfSabotage: '破坏者'
   GameMaster: '游戏管理员'
   Helper: '帮手'
   Waiting: '尚未分配'
@@ -191,6 +206,7 @@ fortune:
   werewolf: '人狼'
   vampire: '吸血鬼'
   pumpkin: '南瓜'
+  oni: '鬼'
 
 # Psychic result.
 psychic:
@@ -198,6 +214,7 @@ psychic:
   werewolf: '人狼'
   BigWolf: '大狼'
   TinyFox: '小狐'
+  oni: '鬼'
   # delimiter of multiple result in chemical.
   _delimiter: '×'
 
@@ -514,6 +531,8 @@ ObstructiveMad:
   select: '{{name}} 妨碍了 {{target}}。'
   # a Diviner is blocked.
   blocked: '{{name}} 占卜了 {{target}} 的身份，但是被不知道什么人妨碍了。'
+  # SpaceWerewolfObserver is blocked
+  spaceWerewolfObserverBlocked: '{{name}} 观察了 {{target}} 的身份，但是被不知道什么人妨碍了。'
 
 TroubleMaker:
   # Select to make a trouble.
@@ -732,6 +751,8 @@ Emma:
     sacrifice: '{{name}} 被作为活祭品献祭了。'
     # Lorelei
     lorelei: '{{name}} 被怨恨的歌声诱导了。'
+    # Killed by Oni
+    oni: '{{name}} 被鬼捉走了。'
 
 EyesWolf:
   # EyesWolf result strings
@@ -755,6 +776,8 @@ EyesWolf:
     trap: '向 {{name}} 发起的袭击，被陷阱阻止了。'
     # Guard by a SnowLover
     snow: '向 {{name}} 发起的袭击，被风雪阻止了。'
+    # Target was Acrobat
+    acrobat: '向 {{name}} 发起的袭击，被杂耍般的动作躲开了。'
 
 TongueWolf:
   # Result of TongueWolf skill.
@@ -946,6 +969,49 @@ Gambler:
   bet: '{{name}} 加入了赌博。'
   keep: '{{name}} 没有加入赌博。'
 
+CynthiaWolf:
+  affected: '{{target}} 被 {{name}} 放出的月亮的气场魅惑了。'
+
+Trickster:
+  # First select.
+  select1: '{{name}} 指定 {{target}} 为羁绊中的第1人。'
+  select2: '{{name}} 指定 {{target}} 为羁绊中的第2人。'
+  # Error: select another player
+  noSelectTwice: '请选择另一个不同的对象。'
+  # Select a target.
+  select: '{{name}} 在 {{target}} 的命运中系上了绳结。'
+  # Became a lover.
+  become: '{{name}} 缔结了命运的羁绊。'
+
+Sleepwalker:
+  awake: '{{name}} 察觉自己的深夜里徘徊。'
+
+Oni:
+  select: '{{name}} 准备把 {{target}} 捉走。'
+
+Saint:
+  select: '{{name}} 对 {{target}} 使用了奇迹之力。'
+
+Acrobat:
+  cancel: '{{name}} 躲开了人狼的袭击。'
+
+Hanami:
+  drunk: '{{name}} 与友人们赏花过后尽兴归去了，其中似乎有人酩酊大醉。'
+
+# Werewolf
+SpaceWerewolfImposter:
+  # Selected a target.
+  select: '以 {{name}} 为首的诈欺师们决定今晚袭击 {{target}}。'
+
+SpaceWerewolfObserver:
+  # Selected a target.
+  select: '{{name}} 观察了 {{target}}。'
+  resultImposter: '根据 {{name}} 对 {{target}} 的观察，{{target}} 是背叛者。'
+  resultNotImposter: '根据 {{name}} 对 {{target}} 的观察，{{target}} 不是背叛者。'
+
+SpaceWerewolfGuard:
+  select: '{{name}} 守护了 {{target}}。'
+
 GameMaster:
   # Failed to revive.
   reviveFail: '这名玩家无法复活。'
@@ -1021,6 +1087,16 @@ FanOfIdol:
 LoreleiFamilia:
   name: '罗蕾莱眷属'
   jobname: '罗蕾莱眷属（{{jobname}}）'
+
+MoonPhilia:
+  # name for desc
+  name: '月狂病'
+  # jobname
+  jobname: '月狂病（{{jobname}}）'
+
+Bonds:
+  name: '羁绊'
+  jobname: '{{jobname}}（羁绊）'
 
 Decider:
   jobname: '{{jobname}}（决定者）'

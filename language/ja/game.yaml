@@ -8,6 +8,7 @@ common:
   chemicalWerewolf: '炼成人狼'
   # 敗北村
   losemode: '败北村'
+  ushi: '2阵营战'
 # Error messages
 error:
   # Common error message

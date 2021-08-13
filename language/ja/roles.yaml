@@ -168,6 +168,11 @@ jobname:
   BloodWolf: '血狼'
   Reincarnator: '转生者'
   Duelist: '决斗者'
+  MementoDisposer: '遗品整理士'
+  Interpreter: '翻译'
+  Hierarch: '教主'
+  Dreamer: '蝴蝶'
+  VariationFox: '歪狐'
   SpaceWerewolfCrew: '宇航员'
   SpaceWerewolfImposter: '诈欺师'
   SpaceWerewolfObserver: '观察者'
@@ -1017,6 +1022,24 @@ Duelist:
   select: '{{name}} 向 {{target}} 发起了决斗邀请。'
   # Become a enemy.
   become: '{{target}} 与 {{name}} 开始决斗了。'
+
+MementoDisposer:
+  select: '{{name}} 整理了 {{target}} 的遗物。'
+  resultYes: '{{name}} 整理遗物时，在 {{target}} 的遗物中发现了能够致人死命的凶器。'
+  resultNo: '{{name}} 整理遗物时，没有在 {{target}} 的遗物中发现可疑物品。'
+  
+Interpreter:
+  select1: '{{name}} 把 {{target}}选为提供传译的第1人。'
+  select2: '{{name}} 把 {{target}}选为提供传译的第2人。'
+  noSelectTwice: '不能多次选择同一人。'
+  select: '{{name}} 为 {{target}} 提供翻译。'
+  become: '有一位翻译为 {{name}}提供服务。'
+
+Dreamer:
+  cancel: '{{name}} 从长梦中惊醒，原来自己是蝴蝶。'
+
+VariationFox:
+  variation: '{{name}} 改变了自身的体质。'
 
 # Werewolf
 SpaceWerewolfImposter:

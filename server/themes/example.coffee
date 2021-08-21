@@ -1,12 +1,24 @@
 module.exports=
     name:"东方Project"
+    #
     opening:"异变发生！"
+    # to let players know woh they are
+    skin_tip:"你的身份"
+    # 主题的作者
+    author:"*******（加上联系方式）"
+    # 修改时间
+    lastModified:"2021-08-21T10:46:33.917Z"
     vote:""
     sunrise:""
     sunset:""
     icon:""
     background_color:"black"
     color:"rgb(255,0,166)"
+    lockable:true
+    isAvailable:->
+        # 如果想要做成有某种限制条件
+        # return false
+        return true
     skins:
         # 罗马字名 ，只允许半角英数字和下划线，数字和下划线不允许是首位
         # 不可以重复
@@ -20,10 +32,3 @@ module.exports=
             avatar:["http://img.example.com/some_other_character_1.jpg","http://img.example.com/some_other_character_2.jpg"]
             name:"大鲶鱼"
             prize:"" # 称号是允许留空的
-    # to let players know woh they are
-    skin_tip:"你的身份"
-    lockable:false
-    isAvailable:->
-        # if want to be a time limited theme
-        # return false
-        return true

@@ -275,6 +275,7 @@ foundDetail:
   loreleisuicide: '追随罗蕾莱自尽'
   oni: '被鬼捉走'
   selfdestruct: '自爆'
+  assassinate: '暗杀'
   fallback: '未知原因'
   situation: '{{name}} 的死因是 {{detail}}。'
 

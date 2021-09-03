@@ -123,6 +123,7 @@ messages:
   Interpreter: '请逐个选择要提供传译的两人'
   Hierarch: '请选择一个人使他成为信者'
   VariationFox: '请在准备改变体质的时候选择'
+  Assassin: '请选择要暗杀的对象'
   SpaceWerewolfObserver: '请选择要观察的对象'
   SpaceWerewolfGuard: '请选择要守护的对象'
   SpaceWerewolfSabotage: '请选择妨碍的对象'

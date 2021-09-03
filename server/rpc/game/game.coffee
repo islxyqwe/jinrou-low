@@ -1466,7 +1466,7 @@ class Game
                             @participants=@participants.filter (x)->x!=player
                 # たまに転生
                 deads=shuffle @players.filter (x)->x.dead && !x.norevive && !x.scapegoat && !(@gamelogs.some((log)->
-                        log.id==x.id && log.event=="found" && log.day==@day 
+                        log.id==x.id && log.event=="found" && log.day==@day
                     ))
                 # 転生確率
                 # 1人の転生確率をpとすると死者n人に対して転生人数の期待値はpn人。
@@ -1902,7 +1902,7 @@ class Game
             x = obj.pl
             situation=switch obj.found
                 #死因
-                when "werewolf","werewolf2","trickedWerewolf","poison","hinamizawa","vampire","vampire2","witch","dog","trap","marycurse","psycho","crafty","greedy","tough","lunaticlover","hooligan","dragon","samurai","elemental","sacrifice","lorelei","oni","selfdestruct"
+                when "werewolf","werewolf2","trickedWerewolf","poison","hinamizawa","vampire","vampire2","witch","dog","trap","marycurse","psycho","crafty","greedy","tough","lunaticlover","hooligan","dragon","samurai","elemental","sacrifice","lorelei","oni","selfdestruct","assassinate"
                     @i18n.t "found.normal", {name: x.name}
                 when "bomb"
                     @i18n.t "found.normal", {name: x.name}
@@ -1947,7 +1947,7 @@ class Game
                     "foxsuicide","friendsuicide","twinsuicide","dragonknightsuicide","vampiresuicide","santasuicide","fascinatesuicide","loreleisuicide"
                     "infirm","hunter",
                     "gmpunish","gone-day","gone-night","crafty","greedy","tough","lunaticlover",
-                    "hooligan","dragon","samurai","elemental","sacrifice","lorelei","oni","selfdestruct"
+                    "hooligan","dragon","samurai","elemental","sacrifice","lorelei","oni","selfdestruct","assassinate"
                 ].includes obj.found
                     detail = @i18n.t "foundDetail.#{obj.found}"
                 else
@@ -2016,6 +2016,8 @@ class Game
                         "oni"
                     when "selfdestruct"
                         "selfdestruct"
+                    when "assassinate"
+                        "assassinate"
                     else
                         null
                 if emma_log?
@@ -3463,7 +3465,7 @@ class Player
     # 死亡させられそうな場合に耐性をチェック
     # Returns true if it resisted its death.
     checkDeathResistance:-> false
-    assassinationReflectivity: 0
+    assassinationReflex:-> false
     # 殺されたとき(found:死因。fromは場合によりplayerid。punishの場合は[playerid]))
     die:(game,found,from)->
         return if @dead
@@ -4418,8 +4420,8 @@ class Fugitive extends Player
         @addGamelog game,"runto",null,pl.id
         null
     checkDeathResistance:(game, found)->
-        # 狼の襲撃・ヴァンパイアの襲撃・魔女の毒薬は回避
-        if Found.isNormalWerewolfAttack(found) || Found.isNormalVampireAttack(found) || found in ["witch", "oni"]
+        # 狼の襲撃・ヴァンパイアの襲撃・魔女の毒薬・人攫い・暗殺は回避
+        if Found.isNormalWerewolfAttack(found) || Found.isNormalVampireAttack(found) || found in ["witch", "oni", "assassinate"]
             if @target!=""
                 if Found.isNormalWerewolfAttack found
                     game.addGuardLog @id, AttackKind.werewolf, GuardReason.absent
@@ -10794,7 +10796,10 @@ class Oni extends Player
     psychicResult: PsychicResult.oni
     # 鬼の人さらい減衰率
     attenuationRate: 0.2
-    assassinationReflectivity: 0.3
+    assassinationReflex:->
+        if Math.random() <= 0.3
+            return true
+        return false
     hasDeadResistance:-> true
     hasDeadlyWeapon:->true
     sleeping:->true
@@ -10813,7 +10818,7 @@ class Oni extends Player
         return wolves.some (pl)-> !pl.dead
     checkDeathResistance:(game, found)->
         # 30%で狼の襲撃に耐える
-        if Math.random() < 0.3 && Found.isNormalWerewolfAttack found
+        if Math.random() < 0.3 && Found.isNormalWerewolfAttack found && !@scapegoat
             game.addGuardLog @id, AttackKind.werewolf, GuardReason.tolerance
             return true
         return false
@@ -10843,8 +10848,9 @@ class Oni extends Player
         successRate = Math.pow @attenuationRate, successCount
         if successRate < 0.01
             successRate = 0.01
-        if pl.assassinationReflectivity > 0 && Math.random() < pl.assassinationReflectivity
+        if pl.assassinationReflex game
             @die game, "oni", pl.id
+            @addGamelog game,"assassinationreflex",null,pl.id
         else if Math.random() < successRate
             pl.die game, "oni", @id
             @setFlag Object.assign {}, @flag, {
@@ -10935,7 +10941,10 @@ class Hanami extends Player
 class GoldOni extends Oni
     type: "GoldOni"
     attenuationRate: 0.5
-    assassinationReflectivity: 0.4
+    assassinationReflex:->
+        if Math.random() <= 0.4
+            return true
+        return false
     constructor:->
         super
 
@@ -10956,7 +10965,7 @@ class GoldOni extends Oni
         return targets.every (pl)-> pl.dead
     checkDeathResistance:(game, found)->
         # 40%で狼の襲撃に耐える
-        if Math.random() < 0.4 && Found.isNormalWerewolfAttack found
+        if Math.random() < 0.4 && Found.isNormalWerewolfAttack found && !@scapegoat
             game.addGuardLog @id, AttackKind.werewolf, GuardReason.tolerance
             return true
         return false
@@ -11022,18 +11031,23 @@ class Reincarnator extends Player
     isReviver:->true
     dying:(game,found)->
         super
-        # 死体
-        deads = game.players.filter (x)->x.dead && !x.found && !x.norevive && !x.scapegoat && x.id != @id && !(x.type in Shared.game.nonhumans)
-        if deads.length==0
-            return
-        pl=deads[Math.floor(Math.random()*deads.length)]
-        @addGamelog game, "reincarnation", null, pl.id
-        log=
-            mode:"hidden"
-            to:-1
-            comment: game.i18n.t "roles:Reincarnator.revive", {name: @name, target: pl.name}
-        splashlog game.id,game,log
-        pl.revive game
+        unless found in ["gone-day", "gone-night"]
+            # 死体
+            deads = game.players.filter (x)=>
+                if !(x.dead && !x.found && !x.norevive && !x.scapegoat && x.id != @id)
+                    return false
+                # 人外は除く
+                return getAllMainRoles(x).every((role)-> !(role.type in Shared.game.nonhumans))
+            if deads.length==0
+                return
+            pl=deads[Math.floor(Math.random()*deads.length)]
+            @addGamelog game, "reincarnation", null, pl.id
+            log=
+                mode:"hidden"
+                to:-1
+                comment: game.i18n.t "roles:Reincarnator.revive", {name: @name, target: pl.name}
+            splashlog game.id,game,log
+            pl.revive game
 
 class Duelist extends Player
     type:"Duelist"
@@ -11274,6 +11288,49 @@ class VariationFox extends Fox
         unless isvote
             []
         else super
+
+class Assassin extends Player
+    type:"Assassin"
+    midnightSort:100
+    formType: FormType.optionalOnce
+    hasDeadlyWeapon:->true
+    sleeping:->true
+    jobdone:->@target? || @flag
+    constructor:->
+        super
+        @setFlag null
+    sunset:(game)->
+        if @flag || game.day==1
+            @setTarget ""
+        else
+            @setTarget null
+    job:(game, playerid)->
+        if playerid == @id
+            return game.i18n.t "error.common.noSelectSelf"
+        if @flag || @target?
+            return game.i18n.t "error.common.alreadyUsed"
+        pl = game.getPlayer playerid
+        unless pl?
+            return game.i18n.t "error.common.nonexistentPlayer"
+        @setTarget playerid
+        pl.touched game,@id
+        log=
+            mode:"skill"
+            to:@id
+            comment: game.i18n.t "roles:Assassin.select", {name: @name, target: pl.name}
+        splashlog game.id,game,log
+        null
+    midnight:(game)->
+        pl=game.getPlayer game.skillTargetHook.get @target
+        unless pl?
+            return
+        if pl.assassinationReflex game
+            @die game, "assassinate", pl.id
+            @addGamelog game,"assassinationreflex",null,pl.id
+        else
+            pl.die game, "assassinate", @id
+        @setFlag true
+        null
 
 # ============================
 # Roles for Space Werewolf
@@ -11856,6 +11913,12 @@ class Complex
         if @mcall game, @main.hasDeadlyWeapon, game
             return true
         if @sub?.hasDeadlyWeapon game
+            return true
+        return false
+    assassinationReflex:(game)->
+        if @mcall game, @main.assassinationReflex, game
+            return true
+        if @sub?.assassinationReflex game
             return true
         return false
     getAttribute:(attr, game)->
@@ -12904,7 +12967,15 @@ class MoonPhilia extends WolfMinion
         else
             super
     getSpeakChoice:(game)->
-        ["madcouple"].concat super
+        result=@mcall game,@main.getSpeakChoice,game
+        if @sub?
+            for obj in @sub.getSpeakChoice game
+                unless result.some((x)->x==obj)
+                    result.push obj
+        for obj in ["madcouple"]
+            unless result.some((x)->x==obj)
+                result.push obj
+        result
 
 class Bonds extends Complex
     cmplType:"Bonds"
@@ -12968,7 +13039,15 @@ class Interpreted extends Complex
             true
         else super
     getSpeakChoice:(game)->
-        ["couple"].concat super
+        result=@mcall game,@main.getSpeakChoice,game
+        if @sub?
+            for obj in @sub.getSpeakChoice game
+                unless result.some((x)->x==obj)
+                    result.push obj
+        for obj in ["couple"]
+            unless result.some((x)->x==obj)
+                result.push obj
+        result
 
 # 決定者
 class Decider extends Complex
@@ -13381,6 +13460,7 @@ jobs=
     Hierarch:Hierarch
     Dreamer:Dreamer
     VariationFox:VariationFox
+    Assassin:Assassin
     SpaceWerewolfCrew:SpaceWerewolfCrew
     SpaceWerewolfImposter:SpaceWerewolfImposter
     SpaceWerewolfObserver:SpaceWerewolfObserver
@@ -13613,6 +13693,7 @@ jobStrength=
     Hierarch:11
     Dreamer:5
     VariationFox:27
+    Assassin:20
 
 module.exports.actions=(req,res,ss)->
     req.use 'user.fire.wall'

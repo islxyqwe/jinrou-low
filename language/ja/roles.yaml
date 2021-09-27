@@ -174,6 +174,7 @@ jobname:
   Dreamer: '蝴蝶'
   VariationFox: '歪狐'
   Assassin: '暗杀者'
+  Shadow: '影法师'
   SpaceWerewolfCrew: '宇航员'
   SpaceWerewolfImposter: '诈欺师'
   SpaceWerewolfObserver: '观察者'
@@ -1007,6 +1008,9 @@ Oni:
 Saint:
   select: '{{name}} 对 {{target}} 使用了奇迹之力。'
 
+DarkWolf:
+  hidden: '投票结果被黑暗吞没了。'
+
 Acrobat:
   cancel: '{{name}} 躲开了人狼的袭击。'
 
@@ -1030,7 +1034,7 @@ MementoDisposer:
   select: '{{name}} 整理了 {{target}} 的遗物。'
   resultYes: '{{name}} 整理遗物时，在 {{target}} 的遗物中发现了能够致人死命的凶器。'
   resultNo: '{{name}} 整理遗物时，没有在 {{target}} 的遗物中发现可疑物品。'
-  
+
 Interpreter:
   select1: '{{name}} 把 {{target}}选为提供传译的第1人。'
   select2: '{{name}} 把 {{target}}选为提供传译的第2人。'
@@ -1046,6 +1050,10 @@ VariationFox:
 
 Assassin:
   select: '{{name}} 暗杀了 {{target}}。'
+
+Shadow:
+  select: '{{name}} 剥去了 {{target}} 的影子。'
+  notification: '{{target}} 的影子被藏起来了。'
 
 # Werewolf
 SpaceWerewolfImposter:

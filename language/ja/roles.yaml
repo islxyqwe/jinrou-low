@@ -175,6 +175,7 @@ jobname:
   VariationFox: '歪狐'
   Assassin: '暗杀者'
   Shadow: '影法师'
+  AttractiveWoman: '美女'
   SpaceWerewolfCrew: '宇航员'
   SpaceWerewolfImposter: '诈欺师'
   SpaceWerewolfObserver: '观察者'
@@ -1054,6 +1055,9 @@ Assassin:
 Shadow:
   select: '{{name}} 剥去了 {{target}} 的影子。'
   notification: '{{target}} 的影子被藏起来了。'
+
+AttractiveWoman:
+  select: '{{name}} 魅惑了 {{target}}。'
 
 # Werewolf
 SpaceWerewolfImposter:

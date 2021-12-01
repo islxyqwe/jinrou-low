@@ -176,6 +176,8 @@ jobname:
   Assassin: '暗杀者'
   Shadow: '影法师'
   AttractiveWoman: '美女'
+  DestroyCraziest: '破坏的狂人'
+  Actress: '女狐'
   SpaceWerewolfCrew: '宇航员'
   SpaceWerewolfImposter: '诈欺师'
   SpaceWerewolfObserver: '观察者'
@@ -1058,6 +1060,12 @@ Shadow:
 
 AttractiveWoman:
   select: '{{name}} 魅惑了 {{target}}。'
+
+DestroyCraziest:
+  select: '{{name}} 向 {{target}} 释放了破坏的诅咒。'
+
+Actress:
+  existence: '{{name}} 从舞台谢幕了。'
 
 # Werewolf
 SpaceWerewolfImposter:

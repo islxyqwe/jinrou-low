@@ -178,6 +178,7 @@ jobname:
   AttractiveWoman: '美女'
   DestroyCraziest: '破坏的狂人'
   Actress: '女狐'
+  StraySheep: '迷途羔羊'
   SpaceWerewolfCrew: '宇航员'
   SpaceWerewolfImposter: '诈欺师'
   SpaceWerewolfObserver: '观察者'
@@ -734,6 +735,8 @@ Emma:
     dog: '{{name}} 成为了犬的食物。'
     # Killed with traps
     trap: '{{name}} 由于落入陷阱死去了。'
+    # Killed with bombs
+    bomb: '{{name}} 被炸弹炸死了。'
     # Killed by a curse
     curse: '{{name}} 被咒杀了。'
     # Killed by a PsychoKiller
@@ -1066,6 +1069,9 @@ DestroyCraziest:
 
 Actress:
   existence: '{{name}} 从舞台谢幕了。'
+
+StraySheep:
+  select: '{{name}} 决意替他人死去了。'
 
 # Werewolf
 SpaceWerewolfImposter:

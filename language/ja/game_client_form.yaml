@@ -126,6 +126,7 @@ messages:
   Assassin: '请选择要暗杀的对象'
   AttractiveWoman: '请选择要魅惑的对象'
   DestroyCraziest: '请选择要破坏的对象'
+  StraySheep: '请在准备使用能力的时候选择'
   SpaceWerewolfObserver: '请选择要观察的对象'
   SpaceWerewolfGuard: '请选择要守护的对象'
   SpaceWerewolfSabotage: '请选择妨碍的对象'

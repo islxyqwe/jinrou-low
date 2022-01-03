@@ -11472,25 +11472,24 @@ class StraySheep extends Player
         splashlog game.id,game,log
         null
     midnight:(game, midnightSort)->
-        # ここが無効化されたら発動しないように
         if @flag=="using"
             @setFlag "using2"
-        # 人狼の襲撃を自分に設定する
-        for target in game.werewolf_target
-            # 襲撃対象を書き換える
-            if target.to
-                # 襲撃対象無しの場合は書き換えられない
-                target.to = @id
-            # 襲撃方法を変更
-            target.found = "trickedWerewolf"
-        # 自分を除く全員に襲撃無効を付与する（仮仕様）
-        alives = game.players.filter((x)->!x.dead).map((x)-> x.id)
-        for pid in alives
-            p = game.getPlayer pid
-            if p.id != @id
-                newpl = Player.factory null, game, p, null, RaidProtected #いい感じの護衛
-                p.transProfile newpl
-                p.transform game, newpl, true
+            # 人狼の襲撃を自分に設定する
+            for target in game.werewolf_target
+                # 襲撃対象を書き換える
+                if target.to
+                    # 襲撃対象無しの場合は書き換えられない
+                    target.to = @id
+                # 襲撃方法を変更
+                target.found = "trickedWerewolf"
+            # 自分を除く全員に襲撃無効を付与する（仮仕様）
+            alives = game.players.filter((x)->!x.dead).map((x)-> x.id)
+            for pid in alives
+                p = game.getPlayer pid
+                if p.id != @id
+                    newpl = Player.factory null, game, p, null, RaidProtected #いい感じの護衛
+                    p.transProfile newpl
+                    p.transform game, newpl, true
         null
     sunsetAlways:(game)->
         pl = game.getPlayer @id
@@ -13306,15 +13305,16 @@ class RaidProtected extends Complex
     cmplType:"RaidProtected"
     checkDeathResistance:(game, found)->
         # この他の死因を防ぐ
-        if found in ["punish", "infirm", "bonds", "hunter", "gmpunish", "gone-day", "gone-night", "hinamizawa", "poison", "vampire2", "trap", "bomb", "marycurse", "psycho", "curse", "spygone",
+        if found in ["punish", "infirm", "bonds", "hunter", "gmpunish", "gone-day", "gone-night", "hinamizawa", "poison", "werewolf2", "vampire2", "trap", "marycurse", "psycho", "curse", "spygone",
                      "foxsuicide", "friendsuicide", "twinsuicide", "dragonknightsuicide", "vampiresuicide", "santasuicide", "fascinatesuicide", "loreleisuicide",
+                     "bomb",
                      "crafty", "greedy", "tough", "lunaticlover", "sacrifice", "lorelei", "selfdestruct"]
             return false
         return true
-    sunsetAlways:(game)->
-        # 一日しか効かない
-        @mcall game, @main.sunsetAlways, game
-        @sub?.sunsetAlways? game
+    sunrise:(game)->
+        # 昼からは元に戻してあげる
+        @mcall game,@main.sunrise,game
+        @sub?.sunrise? game
         @uncomplex game
 
 # 決定者

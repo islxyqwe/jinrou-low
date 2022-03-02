@@ -186,6 +186,9 @@ jobname:
   SpaceWerewolfSabotage: '破坏者'
   FrontOni: '前鬼'
   BackOni: '后鬼'
+  Secretary: '秘书'
+
+  # Name of special subjobs.
   GameMaster: '游戏管理员'
   Helper: '帮手'
   Waiting: '尚未分配'
@@ -1074,6 +1077,9 @@ Actress:
 
 StraySheep:
   select: '{{name}} 决意替他人死去了。'
+
+Secretary:
+  select: '{{name}} 决定辅佐 {{target}}。'
 
 # Werewolf
 SpaceWerewolfImposter:

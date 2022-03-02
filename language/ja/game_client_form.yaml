@@ -129,6 +129,9 @@ messages:
   StraySheep: '请在准备使用能力的时候选择'
   FrontOni: '请选择要捉走的对象'
   BackOni: '请选择要捉走的对象'
+  Secretary: '请选择要辅佐的对象'
+
+  # Message for normal selection form of special subjobs.  normalMessage:
   SpaceWerewolfObserver: '请选择要观察的对象'
   SpaceWerewolfGuard: '请选择要守护的对象'
   SpaceWerewolfSabotage: '请选择妨碍的对象'

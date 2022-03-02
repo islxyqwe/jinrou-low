@@ -11524,6 +11524,34 @@ class BackOni extends Oni
         wolves = game.players.filter (pl)-> pl.getTeam() == "Fox"
         return wolves.every (pl)-> pl.dead
 
+class Secretary extends Player
+    type: "Secretary"
+    formType: FormType.optional
+    sleeping:-> true
+    jobdone:-> @target?
+    sunset:(game)->
+        @setTarget null
+    job:(game, playerid)->
+        @setTarget playerid
+        pl=game.getPlayer playerid
+        pl.touched game,@id
+        log=
+            mode:"skill"
+            to:@id
+            comment: game.i18n.t "roles:Secretary.select", {name: @name, target: pl.name}
+        splashlog game.id,game,log
+        null
+    midnight:(game, midnightSort)->
+        # 複合させる
+        pl = game.getPlayer game.skillTargetHook.get @target
+        unless pl?
+            return
+        newpl = Player.factory null, game, pl, null, OnedayAuthority
+        pl.transProfile newpl
+        newpl.cmplFlag = @id
+        pl.transform game, newpl, true
+        @addGamelog game, "secretary", pl.type, pl.id
+        null
 
 # ============================
 # Roles for Space Werewolf
@@ -13336,6 +13364,19 @@ class RaidProtected extends Complex
         @sub?.sunrise? game
         @uncomplex game
 
+# 権力者（1日のみ）
+class OnedayAuthority extends Complex
+    cmplType:"OnedayAuthority"
+    dovote:(game,target)->
+        result=@mcall game,@main.dovote,game,target
+        return result if result?
+        game.votingbox.votePower this,1 #票をひとつ増やす
+        null
+    sunsetAlways:(game)->
+        @mcall game,@main.sunsetAlways,game
+        @sub?.sunsetAlways? game
+        @uncomplex game
+
 # 決定者
 class Decider extends Complex
     cmplType:"Decider"
@@ -13755,6 +13796,7 @@ jobs=
     StraySheep:StraySheep
     FrontOni:FrontOni
     BackOni:BackOni
+    Secretary:Secretary
     SpaceWerewolfCrew:SpaceWerewolfCrew
     SpaceWerewolfImposter:SpaceWerewolfImposter
     SpaceWerewolfObserver:SpaceWerewolfObserver
@@ -13822,6 +13864,7 @@ complexes=
     WomanAttracted:WomanAttracted
     NoGuarded:NoGuarded
     RaidProtected:RaidProtected
+    OnedayAuthority:OnedayAuthority
 
     # 役職ごとの強さ
 jobStrength=
@@ -14000,6 +14043,7 @@ jobStrength=
     StraySheep:8
     FrontOni:10
     BackOni:10
+    Secretary:18
 
 module.exports.actions=(req,res,ss)->
     req.use 'user.fire.wall'

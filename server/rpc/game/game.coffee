@@ -11534,6 +11534,8 @@ class Secretary extends Player
     job:(game, playerid)->
         @setTarget playerid
         pl=game.getPlayer playerid
+        if pl.id == @id
+            return game.i18n.t "error.common.noSelectSelf"
         pl.touched game,@id
         log=
             mode:"skill"

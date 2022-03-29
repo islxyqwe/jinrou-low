@@ -49,7 +49,10 @@ module.exports.actions =(req,res,ss)->
                 results.push {
                     value:t
                     name:themes[t].name
+                    update:new Date(themes[t].lastModified || 0)
                 }
+            results.sort (a,b) => 
+                return b.update - a.update
             res results
         catch e
             res {error:e}

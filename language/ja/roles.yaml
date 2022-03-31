@@ -187,6 +187,7 @@ jobname:
   FrontOni: '前鬼'
   BackOni: '后鬼'
   Secretary: '秘书'
+  ResidualHaunting: '地缚灵'
 
   # Name of special subjobs.
   GameMaster: '游戏管理员'
@@ -1080,6 +1081,9 @@ StraySheep:
 
 Secretary:
   select: '{{name}} 决定辅佐 {{target}}。'
+
+ResidualHaunting:
+  select: '{{name}} 成为了 {{target}} 家中的地缚灵。'
 
 # Werewolf
 SpaceWerewolfImposter:

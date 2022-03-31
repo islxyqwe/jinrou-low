@@ -130,6 +130,7 @@ messages:
   FrontOni: '请选择要捉走的对象'
   BackOni: '请选择要捉走的对象'
   Secretary: '请选择要辅佐的对象'
+  ResidualHaunting: '请选择想要附身的对象'
 
   # Message for normal selection form of special subjobs.  normalMessage:
   SpaceWerewolfObserver: '请选择要观察的对象'

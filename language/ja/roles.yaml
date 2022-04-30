@@ -188,6 +188,7 @@ jobname:
   BackOni: '后鬼'
   Secretary: '秘书'
   ResidualHaunting: '地缚灵'
+  HouseKeeper: '保姆'
 
   # Name of special subjobs.
   GameMaster: '游戏管理员'
@@ -1084,6 +1085,10 @@ Secretary:
 
 ResidualHaunting:
   select: '{{name}} 成为了 {{target}} 家中的地缚灵。'
+
+HouseKeeper:
+  select: '{{name}} 前往 {{target}} 的家打理家务。'
+  detect: '{{name}} 目击了 {{werewolf}} 袭击 {{target}} 的现场。'
 
 # Werewolf
 SpaceWerewolfImposter:

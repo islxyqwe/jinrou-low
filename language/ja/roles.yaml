@@ -189,6 +189,7 @@ jobname:
   Secretary: '秘书'
   ResidualHaunting: '地缚灵'
   HouseKeeper: '保姆'
+  RainyBoy: '雨男'
 
   # Name of special subjobs.
   GameMaster: '游戏管理员'
@@ -1089,6 +1090,10 @@ ResidualHaunting:
 HouseKeeper:
   select: '{{name}} 前往 {{target}} 的家打理家务。'
   detect: '{{name}} 目击了 {{werewolf}} 袭击 {{target}} 的现场。'
+
+RainyBoy:
+  select: '{{name}} 决定明天会下雨。'
+  weather: '今天下雨了。'
 
 # Werewolf
 SpaceWerewolfImposter:

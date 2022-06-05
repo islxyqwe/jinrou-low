@@ -132,6 +132,7 @@ messages:
   Secretary: '请选择要辅佐的对象'
   ResidualHaunting: '请选择想要附身的对象'
   HouseKeeper: '请选择打理家务的客户'
+  RainyBoy: '请在准备下雨的时候选择'
 
   # Message for normal selection form of special subjobs.  normalMessage:
   SpaceWerewolfObserver: '请选择要观察的对象'

@@ -190,6 +190,7 @@ jobname:
   ResidualHaunting: '地缚灵'
   HouseKeeper: '保姆'
   RainyBoy: '雨男'
+  DarkPsychic: '黑暗灵媒师'
 
   # Name of special subjobs.
   GameMaster: '游戏管理员'
@@ -783,6 +784,8 @@ Emma:
     selfdestruct: '{{name}} 自爆了。'
     # Killed by Assassin
     assassinate: '{{name}} 被暗杀了。'
+    # Killed by DarkPsychic
+    ghostrevenge: '{{name}} 被亡灵的怨念杀死了。'
 
 EyesWolf:
   # EyesWolf result strings

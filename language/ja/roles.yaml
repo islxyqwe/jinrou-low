@@ -191,6 +191,7 @@ jobname:
   HouseKeeper: '保姆'
   RainyBoy: '雨男'
   DarkPsychic: '黑暗灵媒师'
+  Itako: '潮来巫女'
 
   # Name of special subjobs.
   GameMaster: '游戏管理员'
@@ -1097,6 +1098,10 @@ HouseKeeper:
 RainyBoy:
   select: '{{name}} 决定明天会下雨。'
   weather: '今天下雨了。'
+
+Itako:
+  select: '{{name}} 侧耳倾听了 {{target}} 的声音。'
+  result: '{{name}} 侧耳倾听了 {{target}} 的声音。{{target}} 是 {{job}}。'
 
 # Werewolf
 SpaceWerewolfImposter:

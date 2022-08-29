@@ -35,9 +35,10 @@ exports.actions =(req,res,ss)->
         unless req.session.administer
             res {error: i18n.t "error.notAdmin"}
             return
-        M.blacklist.find().limit(100).skip(100*(query.page ? 0)).toArray (err,docs)->
+        d = new Date()
+        M.blacklist.find({$or:[{expires:{$gt:d}},{expires:{$exists:false}}]}).limit(100).skip(100*(query.page ? 0)).toArray (err,docs)->
             M.blacklist.count (err, count)->
-                res {docs:docs,page:query.page ? 0,total:Math.ceil(count/100)}
+                res {docs:docs,page:query.page ? 0,total:Math.ceil(count / 100)}
     addBlacklist:(query)->
         # blacklistに新しいのを追加
         unless req.session.administer

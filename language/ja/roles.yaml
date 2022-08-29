@@ -164,11 +164,36 @@ jobname:
   DarkWolf: '暗狼'
   Acrobat: '杂耍艺人'
   Hanami: '赏花客'
+  GoldOni: '金鬼'
+  BloodWolf: '血狼'
+  Reincarnator: '转生者'
+  Duelist: '决斗者'
+  MementoDisposer: '遗品整理士'
+  Interpreter: '翻译'
+  Hierarch: '教主'
+  Dreamer: '蝴蝶'
+  VariationFox: '歪狐'
+  Assassin: '暗杀者'
+  Shadow: '影法师'
+  AttractiveWoman: '美女'
+  DestroyCraziest: '破坏的狂人'
+  Actress: '女狐'
+  StraySheep: '迷途羔羊'
   SpaceWerewolfCrew: '宇航员'
   SpaceWerewolfImposter: '诈欺师'
   SpaceWerewolfObserver: '观察者'
   SpaceWerewolfGuard: '警戒员'
   SpaceWerewolfSabotage: '破坏者'
+  FrontOni: '前鬼'
+  BackOni: '后鬼'
+  Secretary: '秘书'
+  ResidualHaunting: '地缚灵'
+  HouseKeeper: '保姆'
+  RainyBoy: '雨男'
+  DarkPsychic: '黑暗灵媒师'
+  Itako: '潮来巫女'
+
+  # Name of special subjobs.
   GameMaster: '游戏管理员'
   Helper: '帮手'
   Waiting: '尚未分配'
@@ -193,9 +218,10 @@ teamName:
   Friend: '恋人阵营'
   Devil: '恶魔'
   Vampire: '吸血鬼阵营'
-  Cult: '邪教主阵营'
+  Cult: '教会阵营'
   Raven: '乌鸦阵营'
   Hooligan: '暴徒阵营'
+  Duel: '决斗者阵营'
   Lorelei: '罗蕾莱阵营'
   Neet: 'NEET'
   Others: '其他'
@@ -719,6 +745,8 @@ Emma:
     dog: '{{name}} 成为了犬的食物。'
     # Killed with traps
     trap: '{{name}} 由于落入陷阱死去了。'
+    # Killed with bombs
+    bomb: '{{name}} 被炸弹炸死了。'
     # Killed by a curse
     curse: '{{name}} 被咒杀了。'
     # Killed by a PsychoKiller
@@ -753,6 +781,12 @@ Emma:
     lorelei: '{{name}} 被怨恨的歌声诱导了。'
     # Killed by Oni
     oni: '{{name}} 被鬼捉走了。'
+    # Self-Destruct
+    selfdestruct: '{{name}} 自爆了。'
+    # Killed by Assassin
+    assassinate: '{{name}} 被暗杀了。'
+    # Killed by DarkPsychic
+    ghostrevenge: '{{name}} 被亡灵的怨念杀死了。'
 
 EyesWolf:
   # EyesWolf result strings
@@ -992,11 +1026,82 @@ Oni:
 Saint:
   select: '{{name}} 对 {{target}} 使用了奇迹之力。'
 
+DarkWolf:
+  hidden: '投票结果被黑暗吞没了。'
+
 Acrobat:
   cancel: '{{name}} 躲开了人狼的袭击。'
 
 Hanami:
   drunk: '{{name}} 与友人们赏花过后尽兴归去了，其中似乎有人酩酊大醉。'
+
+BloodWolf:
+  using: '{{name}} 以自身为祭品，引出了血月之力。'
+  affect: '血月之力封印了村人们的能力。'
+
+Reincarnator:
+  revive: '{{name}} 转生成了 {{target}}。'
+
+Duelist:
+  # Select a target.
+  select: '{{name}} 向 {{target}} 发起了决斗邀请。'
+  # Become a enemy.
+  become: '{{target}} 与 {{name}} 开始决斗了。'
+
+MementoDisposer:
+  select: '{{name}} 整理了 {{target}} 的遗物。'
+  resultYes: '{{name}} 整理遗物时，在 {{target}} 的遗物中发现了能够致人死命的凶器。'
+  resultNo: '{{name}} 整理遗物时，没有在 {{target}} 的遗物中发现可疑物品。'
+
+Interpreter:
+  select1: '{{name}} 把 {{target}}选为提供传译的第1人。'
+  select2: '{{name}} 把 {{target}}选为提供传译的第2人。'
+  noSelectTwice: '不能多次选择同一人。'
+  select: '{{name}} 为 {{target}} 提供翻译。'
+  become: '有一位翻译为 {{name}}提供服务。'
+
+Dreamer:
+  cancel: '{{name}} 从长梦中惊醒，原来自己是蝴蝶。'
+
+VariationFox:
+  variation: '{{name}} 改变了自身的体质。'
+
+Assassin:
+  select: '{{name}} 暗杀了 {{target}}。'
+
+Shadow:
+  select: '{{name}} 剥去了 {{target}} 的影子。'
+  notification: '{{target}} 的影子被藏起来了。'
+
+AttractiveWoman:
+  select: '{{name}} 魅惑了 {{target}}。'
+
+DestroyCraziest:
+  select: '{{name}} 向 {{target}} 释放了破坏的诅咒。'
+
+Actress:
+  existence: '{{name}} 从舞台谢幕了。'
+
+StraySheep:
+  select: '{{name}} 决意替他人死去了。'
+
+Secretary:
+  select: '{{name}} 决定辅佐 {{target}}。'
+
+ResidualHaunting:
+  select: '{{name}} 成为了 {{target}} 家中的地缚灵。'
+
+HouseKeeper:
+  select: '{{name}} 前往 {{target}} 的家打理家务。'
+  detect: '{{name}} 目击了 {{werewolf}} 袭击 {{target}} 的现场。'
+
+RainyBoy:
+  select: '{{name}} 决定明天会下雨。'
+  weather: '今天下雨了。'
+
+Itako:
+  select: '{{name}} 侧耳倾听了 {{target}} 的声音。'
+  result: '{{name}} 侧耳倾听了 {{target}} 的声音。{{target}} 是 {{job}}。'
 
 # Werewolf
 SpaceWerewolfImposter:
@@ -1083,6 +1188,12 @@ FanOfIdol:
   name: '粉丝'
   # message when his idol is dead.
   idolDead: '偶像的死亡导致伤心过度，{{name}} 今晚不能使用能力。'
+
+Enemy:
+  # name for desc
+  name: '宿敌'
+  # jobname of Enemy
+  jobname: '宿敌（{{jobname}}）'
 
 LoreleiFamilia:
   name: '罗蕾莱眷属'

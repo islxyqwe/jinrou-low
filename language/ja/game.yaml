@@ -8,6 +8,7 @@ common:
   chemicalWerewolf: '炼成人狼'
   # 敗北村
   losemode: '败北村'
+  ushi: '2阵营战'
 # Error messages
 error:
   # Common error message
@@ -139,6 +140,7 @@ system:
     rebirth: '{{name}} 转生了。'
   # gameStart-related logs
   gamestart:
+    shoji: '隔墙须有耳，窗外岂无人。'
     # Diviner result mode is changed
     divinerModeChanged: '由于存在能够左右占卜结果的职业，占卜结果从「立刻知道」变更为「天亮才知道」。'
     # Excluded jobs
@@ -267,11 +269,14 @@ foundDetail:
   elemental: '暴走的精灵之力'
   sacrifice: '献祭'
   santasuicide: '追随圣诞老人自尽'
-  fascinatesuicide: '追随月下美人自尽'
+  fascinatesuicide: '追随魅惑的对象自尽'
   bonds: '因羁绊而自尽'
   lorelei: '怨恨的歌声'
   loreleisuicide: '追随罗蕾莱自尽'
   oni: '被鬼捉走'
+  selfdestruct: '自爆'
+  assassinate: '暗杀'
+  ghostrevenge: '亡灵的怨念'
   fallback: '未知原因'
   situation: '{{name}} 的死因是 {{detail}}。'
 
@@ -303,7 +308,7 @@ judge:
     fox: '妖狐胜利'
     devil: '恶魔胜利'
     friends: '恋人胜利'
-    cult: '邪教主胜利'
+    cult: '教会胜利'
     vampire: '吸血鬼胜利'
     lonewolf: '一匹狼胜利'
     raven: '乌鸦胜利'

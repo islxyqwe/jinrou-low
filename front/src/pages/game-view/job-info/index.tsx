@@ -44,6 +44,8 @@ const peers: Array<keyof RolePeersInfo> = allElements<keyof RolePeersInfo>()([
   'santaclauses',
   'loreleis',
   'bonds',
+  'targets',
+  'enemies',
   'spaceWerewolfImposters',
 ]);
 /**

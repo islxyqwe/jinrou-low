@@ -315,6 +315,8 @@ exports.start=(roomid)->
                             loreleis: obj.loreleis
                             gamblerStock: obj.gamblerStock
                             bonds: obj.bonds
+                            targets: obj.targets
+                            enemies: obj.enemies
                             spaceWerewolfImposters: obj.spaceWerewolfImposters
                         }
                     else

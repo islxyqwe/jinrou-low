@@ -4,8 +4,7 @@ WORKDIR /jinrou
 COPY . .
 RUN npm install
 RUN cp -r config.default config
-RUN ls
-RUN cd front
+WORKDIR /jinrou/front
 RUN npm install
 RUN npm run production-build
 

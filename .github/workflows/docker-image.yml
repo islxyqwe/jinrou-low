@@ -17,5 +17,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build and publish the Docker image
-      run: ls
-#       run: bash docker-build-push.sh
+      run: bash docker-build-push.sh

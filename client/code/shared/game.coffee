@@ -1268,6 +1268,15 @@ exports.new_rules=[
                 type: 'item'
                 value:
                     type:"checkbox"
+                    id:"lowb"
+                    defaultChecked: false
+                    value:"1"
+                    disabled:(rule)->rule.casting=="特殊规则.量子人狼"
+            }
+            {
+                type: 'item'
+                value:
+                    type:"checkbox"
                     id:"drunk"
                     defaultChecked: false
                     value:"1"

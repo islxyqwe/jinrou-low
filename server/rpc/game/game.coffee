@@ -1015,6 +1015,13 @@ class Game
                 newpl=Player.factory null, this, pl, sub, Complex
                 pl.transProfile newpl
                 pl.transform @,newpl,true
+        if @rule.lowb
+            r=Math.floor Math.random()*@players.length
+            pl=@players[r]
+
+            newpl = Player.factory null, this, pl, null, LowB
+            pl.transProfile newpl
+            pl.transform @,newpl,true,true
         # 酔っ払いを作成
         drunkCount = @players.filter((x)-> x.isJobType "Hanami").length
         if @rule.drunk
@@ -12528,6 +12535,71 @@ class WolfMinion extends Complex
             type:"WolfMinion"
         }
     isWinner:(game,team)->@getTeam()==team
+class LowB extends Complex
+    cmplType:"LowB"
+    getTeam:->
+        if @flag == "Awake"
+            ""
+        else
+            @main.getTeam()
+    getTeamDisp:->
+        if @flag == "Awake"
+            ""
+        else
+            @main.getTeamDisp()
+    getJobname:-> 
+        if @flag == "Awake"
+            @game.i18n.t "roles:LowB.jobname", {jobname: @main.getJobname()}
+        else
+            super
+    getJobDisp:->
+        if @flag == "Awake"
+            @game.i18n.t "roles:LowB.jobname", {jobname: @main.getJobDisp()}
+        else
+            super
+    makejobinfo:(game,result)->
+        @sub?.makejobinfo? game,result
+        @mcall game,@main.makejobinfo,game,result
+        if @flag == "Awake"
+            result.desc?.push {
+                name: @game.i18n.t "roles:LowB.name"
+                type:"LowB"
+            }
+    isWinner:(game, team)->
+        if @flag == "Awake"
+            !(@main.isWinner game, team)
+        else
+            @main.isWinner game, team
+    sunrise:(game)->
+        @mcall game,@main.sunrise,game
+        @sub?.sunrise? game
+        if game.day==1
+            log=
+                mode: "system"
+                comment: game.i18n.t "roles:LowB.notice"
+            splashlog game.id, game, log
+
+        if @flag == "Awake"
+            return
+        if (game.players.length / 3) > (game.players.filter (pl)=> !pl.dead).length
+            @setFlag "Awake"
+            log=
+                mode: "skill"
+                to:@id
+                comment: game.i18n.t "roles:LowB.awake", {name: @name}
+            splashlog game.id, game, log
+    sunset:(game)->
+        @mcall game,@main.sunset,game
+        @sub?.sunset? game
+        if @flag == "Awake"
+            return
+        if (game.players.length / 3) > (game.players.filter (pl)=> !pl.dead).length
+            @setFlag "Awake"
+            log=
+                mode: "skill"
+                to:@id
+                comment: game.i18n.t "roles:LowB.awake", {name: @name}
+            splashlog game.id, game, log
 # 酔っ払い
 class Drunk extends Complex
     cmplType:"Drunk"
@@ -14039,6 +14111,7 @@ complexes=
     Guarded:Guarded
     Muted:Muted
     WolfMinion:WolfMinion
+    LowB:LowB
     Drunk:Drunk
     Decider:Decider
     Authority:Authority
@@ -15499,7 +15572,7 @@ module.exports.actions=(req,res,ss)->
             "dynamic_day_time",
             "decider","authority","scapegoat","will","wolfsound","couplesound","heavenview","shoji",
             "wolfattack","guardmyself","votemyself","deadfox","deathnote","divineresult","psychicresult","waitingnight",
-            "safety","friendsjudge","noticebitten","voteresult","GMpsychic","wolfminion","drunk","losemode","gjmessage","rolerequest","runoff","drawvote","chemical","ushi",
+            "safety","friendsjudge","noticebitten","voteresult","GMpsychic","wolfminion","lowb","drunk","losemode","gjmessage","rolerequest","runoff","drawvote","chemical","ushi",
             "firstnightdivine","consecutiveguard",
             "hunter_lastattack",
             "poisonwolf",

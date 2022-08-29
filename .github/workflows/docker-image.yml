@@ -15,5 +15,15 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
     steps:
     - uses: actions/checkout@v3
-    - name: Build and publish the Docker image
-      run: bash docker-build-push.sh
+    - name: Add SHORT_SHA env property with commit short sha
+      run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+    - name: Generate the Version
+      run: echo "VERSION=`$(cat package.json | jq .version -r)-custom-$SHORT_SHA`" >> $GITHUB_ENV
+    - name: Print the Version
+      run: echo $VERSION
+    - name: Build the Docker image
+      run: docker build . --tag yukimir/jinrou:$VERSION
+    - name: Login to DockerHub
+      run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - name: Push to Dockerhub
+      run: docker push yukimir/jinrou:$VERSION

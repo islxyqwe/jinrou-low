@@ -1160,6 +1160,15 @@ WolfMinion:
   # jobname
   jobname: '狼的仆从（{{jobname}}）'
 
+LowB:
+  # name for desc
+  name: 'LowB'
+  # jobname
+  jobname: 'LowB（{{jobname}}）'
+  notice: '村里蔓延着lowb的气息...'
+  awake: '{{name}} 发现自己就是那个lowb。'
+
+
 HolyProtected:
   guarded: '{{name}} 被神圣的力量守护了。'
 

@@ -2,11 +2,13 @@
 FROM node:8 AS build
 WORKDIR /jinrou
 COPY . .
+COPY ./front ./
 RUN npm install
 RUN cp -r config.default config
 RUN ls
-# RUN npm install
-# RUN npm run production-build
+RUN cd front
+RUN npm install
+RUN npm run production-build
 
 FROM node:8
 MAINTAINER uhyo

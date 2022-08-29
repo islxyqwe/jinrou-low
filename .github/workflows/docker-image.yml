@@ -13,6 +13,8 @@ jobs:
     env:
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+    outputs:
+      image_tag: ${{ steps.output_tag.outputs.tag }}
     steps:
     - uses: actions/checkout@v3
     - name: Add SHORT_SHA env property with commit short sha
@@ -27,3 +29,15 @@ jobs:
       run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - name: Push to Dockerhub
       run: docker push yukimir/jinrou:$VERSION
+    - name: Output the Tag
+      id: output_tag
+      run: echo "::set-output name=tag::yukimir/jinrou:$VERSION"
+  publish:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      KUBEXXX: XXX
+    needs: build
+    steps:
+      - name: Print Image Tag
+        run: echo ${{ needs.build.outputs.image_tag }}

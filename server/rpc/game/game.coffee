@@ -12583,6 +12583,9 @@ class LowB extends Complex
             return
         if (game.players.length / 3) > (game.players.filter (pl)=> !pl.dead).length
             @setFlag "Awake"
+            orig_name = @originalJobname
+            job_name = @getJobname()
+            @setOriginalJobname "#{orig_name}→#{job_name}"
             log=
                 mode: "skill"
                 to:@id
@@ -12595,6 +12598,9 @@ class LowB extends Complex
             return
         if (game.players.length / 3) > (game.players.filter (pl)=> !pl.dead).length
             @setFlag "Awake"
+            orig_name = @originalJobname
+            job_name = @getJobname()
+            @setOriginalJobname "#{orig_name}→#{job_name}"
             log=
                 mode: "skill"
                 to:@id

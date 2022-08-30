@@ -12581,7 +12581,7 @@ class LowB extends Complex
 
         if @flag == "Awake"
             return
-        if (game.players.length / 3) > (game.players.filter (pl)=> !pl.dead).length
+        if (game.players.length / 3) >= (game.players.filter (pl)=> !pl.dead).length
             @setFlag "Awake"
             orig_name = @originalJobname
             job_name = @getJobname()

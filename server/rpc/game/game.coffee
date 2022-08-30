@@ -12573,7 +12573,7 @@ class LowB extends Complex
     sunrise:(game)->
         @mcall game,@main.sunrise,game
         @sub?.sunrise? game
-        if game.day==1
+        if game.day == 2
             log=
                 mode: "system"
                 comment: game.i18n.t "roles:LowB.notice"

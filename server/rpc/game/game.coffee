@@ -12551,7 +12551,7 @@ class LowB extends Complex
         if @flag == "Awake"
             @game.i18n.t "roles:LowB.jobname", {jobname: @main.getJobname()}
         else
-            super
+            @game.i18n.t "roles:LowB.sleepJobname", {jobname: @main.getJobname()}
     getJobDisp:->
         if @flag == "Awake"
             @game.i18n.t "roles:LowB.jobname", {jobname: @main.getJobDisp()}

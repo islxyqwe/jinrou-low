@@ -1167,6 +1167,7 @@ LowB:
   jobname: 'LowB（{{jobname}}）'
   notice: '村里蔓延着lowb的气息...'
   awake: '{{name}} 发现自己就是那个lowb。'
+  sleepJobname: '未觉醒LowB'
 
 
 HolyProtected:

@@ -1165,7 +1165,7 @@ LowB:
   name: 'LowB'
   # jobname
   jobname: 'LowB（{{jobname}}）'
-  notice: '村里蔓延着lowb的气息...'
+  notice: '村中弥漫起lowb的气息...'
   awake: '{{name}} 发现自己就是那个lowb。'
   sleepJobname: '未觉醒LowB（{{jobname}}）'
 

@@ -2335,10 +2335,10 @@ class Game
                 @werewolf_target_remain = 0
 
     # 勝敗決定
-    judge:->
+    judgeTeam: ->
         # 既に終了している場合は再度判定しない
         if @finished
-            return true
+            return "finished"
 
         aliveps=@players.filter (x)->!x.dead    # 生きている人を集める
         # 数える
@@ -2519,7 +2519,11 @@ class Game
         if @revote_num>=4 && !team?
             # 再投票多すぎ
             team="Draw" # 引き分け
-
+        team
+    judge:->
+        team = @judgeTeam()
+        if team == "finished"
+            return true
         if team?
             # 勝敗決定
 
@@ -12534,14 +12538,10 @@ class WolfMinion extends Complex
             name: @game.i18n.t "roles:WolfMinion.name"
             type:"WolfMinion"
         }
-    isWinner:(game,team)->@getTeam()==team
+    isWinner:(game,team) -> @getTeam() == team
+
 class LowB extends Complex
     cmplType:"LowB"
-    getTeam:->
-        if @flag == "Awake"
-            ""
-        else
-            @main.getTeam()
     getTeamDisp:->
         if @flag == "Awake"
             ""
@@ -12573,34 +12573,42 @@ class LowB extends Complex
     sunrise:(game)->
         @mcall game,@main.sunrise,game
         @sub?.sunrise? game
-        if game.day == 2
-            log=
-                mode: "system"
-                comment: game.i18n.t "roles:LowB.notice"
-            splashlog game.id, game, log
-
+        alivePl = (game.players.filter (pl)=> !pl.dead).length
         if @flag == "Awake"
             return
-        if (game.players.length / 3) >= (game.players.filter (pl)=> !pl.dead).length
+        if game.judgeTeam() != null
+            return
+        if alivePl <= 5 || (game.players.length / 3) >= alivePl
             @setFlag "Awake"
             orig_name = @originalJobname
             job_name = @getJobname()
             @setOriginalJobname "#{orig_name}→#{job_name}"
+            log=
+                mode: "system"
+                comment: game.i18n.t "roles:LowB.notice"
+            splashlog game.id, game, log
             log=
                 mode: "skill"
                 to:@id
                 comment: game.i18n.t "roles:LowB.awake", {name: @name}
             splashlog game.id, game, log
     sunset:(game)->
-        @mcall game,@main.sunset,game
-        @sub?.sunset? game
+        @mcall game,@main.sunrise,game
+        @sub?.sunrise? game
+        alivePl = (game.players.filter (pl)=> !pl.dead).length
         if @flag == "Awake"
             return
-        if (game.players.length / 3) > (game.players.filter (pl)=> !pl.dead).length
+        if game.judgeTeam() != null
+            return
+        if alivePl <= 5 || (game.players.length / 3) >= alivePl
             @setFlag "Awake"
             orig_name = @originalJobname
             job_name = @getJobname()
             @setOriginalJobname "#{orig_name}→#{job_name}"
+            log=
+                mode: "system"
+                comment: game.i18n.t "roles:LowB.notice"
+            splashlog game.id, game, log
             log=
                 mode: "skill"
                 to:@id

@@ -1019,7 +1019,7 @@ class Game
             r=Math.floor Math.random()*@players.length
             pl=@players[r]
 
-            newpl = Player.factory null, this, pl, null, LowB
+            newpl = Player.factory null, this, pl, null, HiddenLowB
             pl.transProfile newpl
             pl.transform @,newpl,true,true
         # 酔っ払いを作成
@@ -1417,6 +1417,10 @@ class Game
             @bury "other"
             return if @judge()
 
+            for player in @players
+                if !player.dead
+                    player.daynightChanged this
+
             @runScapegoatJobs()
 
             # 1日目は身代わりくんへの襲撃が発生
@@ -1544,6 +1548,10 @@ class Game
             # sunrise後の死体処理
             @bury "other"
             return if @judge()
+
+            for player in @players
+                if !player.dead
+                    player.daynightChanged this
 
             alives = @players.filter (x)->!x.dead
 
@@ -2335,10 +2343,10 @@ class Game
                 @werewolf_target_remain = 0
 
     # 勝敗決定
-    judgeTeam: ->
+    judge:->
         # 既に終了している場合は再度判定しない
         if @finished
-            return "finished"
+            return true
 
         aliveps=@players.filter (x)->!x.dead    # 生きている人を集める
         # 数える
@@ -2519,11 +2527,7 @@ class Game
         if @revote_num>=4 && !team?
             # 再投票多すぎ
             team="Draw" # 引き分け
-        team
-    judge:->
-        team = @judgeTeam()
-        if team == "finished"
-            return true
+
         if team?
             # 勝敗決定
 
@@ -3445,6 +3449,7 @@ class Player
     # with FrankensteinsMonster and Pyrotechnist in mind
     sunset:(game)->
     deadsunset:(game)->
+    daynightChanged:(game)->
     # called right adter sunset/deadsubset
     # (not prevented by other skills
     sunsetAlways:(game)->
@@ -12214,6 +12219,9 @@ class Complex
             @mcall game,@main.midnightAlways,game,midnightSort
         if @sub?.isComplex() || @sub?.midnightSort == midnightSort
             @sub?.midnightAlways? game,midnightSort
+    daynightChanged:(game)->
+        @mcall game,@main.daynightChanged,game
+        @sub?.daynightChanged? game
     deadsunset:(game)->
         @mcall game,@main.deadsunset,game
         @sub?.deadsunset? game
@@ -12538,73 +12546,41 @@ class WolfMinion extends Complex
             name: @game.i18n.t "roles:WolfMinion.name"
             type:"WolfMinion"
         }
-    isWinner:(game,team) -> @getTeam() == team
-
+    isWinner:(game,team)->@getTeam()==team
 class LowB extends Complex
     cmplType:"LowB"
-    getTeamDisp:->
-        if @flag == "Awake"
-            ""
-        else
-            @main.getTeamDisp()
-    getJobname:-> 
-        if @flag == "Awake"
-            @game.i18n.t "roles:LowB.jobname", {jobname: @main.getJobname()}
-        else
-            @game.i18n.t "roles:LowB.sleepJobname", {jobname: @main.getJobname()}
-    getJobDisp:->
-        if @flag == "Awake"
-            @game.i18n.t "roles:LowB.jobname", {jobname: @main.getJobDisp()}
-        else
-            super
+    getTeam:->""
+    getTeamDisp:-> ""
+    getJobname:-> @game.i18n.t "roles:LowB.jobname", {jobname: @main.getJobname()}
+    getJobDisp:-> @game.i18n.t "roles:LowB.jobname", {jobname: @main.getJobDisp()}
     makejobinfo:(game,result)->
         @sub?.makejobinfo? game,result
         @mcall game,@main.makejobinfo,game,result
-        if @flag == "Awake"
-            result.desc?.push {
-                name: @game.i18n.t "roles:LowB.name"
-                type:"LowB"
-            }
-    isWinner:(game, team)->
-        if @flag == "Awake"
-            !(@main.isWinner game, team)
+        result.desc?.push {
+            name: @game.i18n.t "roles:LowB.name"
+            type:"LowB"
+        }
+    isWinner:(game,team)-> !(@main.isWinner game, team)
+
+class HiddenLowB extends Complex
+    cmplType:"HiddenLowB"
+    getJobname:-> 
+        if @flag
+            @main.getJobname()
         else
-            @main.isWinner game, team
-    sunrise:(game)->
-        @mcall game,@main.sunrise,game
-        @sub?.sunrise? game
+            @game.i18n.t "roles:LowB.sleepJobname", {jobname: @main.getJobname()}
+    daynightChanged:(game)->
+        @mcall game,@main.daynightChanged,game
+        @sub?.daynightChanged? game
         alivePl = (game.players.filter (pl)=> !pl.dead).length
-        if @flag == "Awake"
-            return
-        if game.judgeTeam() != null
+        if @flag
             return
         if alivePl <= 5 || (game.players.length / 3) >= alivePl
             @setFlag "Awake"
-            orig_name = @originalJobname
-            job_name = @getJobname()
-            @setOriginalJobname "#{orig_name}→#{job_name}"
-            log=
-                mode: "system"
-                comment: game.i18n.t "roles:LowB.notice"
-            splashlog game.id, game, log
-            log=
-                mode: "skill"
-                to:@id
-                comment: game.i18n.t "roles:LowB.awake", {name: @name}
-            splashlog game.id, game, log
-    sunset:(game)->
-        @mcall game,@main.sunrise,game
-        @sub?.sunrise? game
-        alivePl = (game.players.filter (pl)=> !pl.dead).length
-        if @flag == "Awake"
-            return
-        if game.judgeTeam() != null
-            return
-        if alivePl <= 5 || (game.players.length / 3) >= alivePl
-            @setFlag "Awake"
-            orig_name = @originalJobname
-            job_name = @getJobname()
-            @setOriginalJobname "#{orig_name}→#{job_name}"
+            pl=game.getPlayer @id
+            newpl = Player.factory null, this, pl, null, LowB
+            pl.transProfile newpl
+            pl.transform @,newpl,true,true
             log=
                 mode: "system"
                 comment: game.i18n.t "roles:LowB.notice"
@@ -14125,6 +14101,7 @@ complexes=
     Guarded:Guarded
     Muted:Muted
     WolfMinion:WolfMinion
+    HiddenLowB:HiddenLowB
     LowB:LowB
     Drunk:Drunk
     Decider:Decider

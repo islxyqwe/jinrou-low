@@ -12578,9 +12578,9 @@ class HiddenLowB extends Complex
         if alivePl <= 5 || (game.players.length / 3) >= alivePl
             @setFlag "Awake"
             pl=game.getPlayer @id
-            newpl = Player.factory null, this, pl, null, LowB
+            newpl = Player.factory null, game, pl, null, LowB
             pl.transProfile newpl
-            pl.transform @,newpl,true,true
+            pl.transform game,newpl,true
             log=
                 mode: "system"
                 comment: game.i18n.t "roles:LowB.notice"

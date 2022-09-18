@@ -1021,6 +1021,7 @@ class Game
 
             newpl = Player.factory null, this, pl, null, HiddenLowB
             pl.transProfile newpl
+            newpl.cmplFlag = ""
             pl.transform @,newpl,true,true
         # 酔っ払いを作成
         drunkCount = @players.filter((x)-> x.isJobType "Hanami").length
@@ -12565,7 +12566,7 @@ class LowB extends Complex
 class HiddenLowB extends Complex
     cmplType:"HiddenLowB"
     getJobname:-> 
-        if @flag
+        if @cmplFlag
             @main.getJobname()
         else
             @game.i18n.t "roles:LowB.sleepJobname", {jobname: @main.getJobname()}
@@ -12573,10 +12574,10 @@ class HiddenLowB extends Complex
         @mcall game,@main.daynightChanged,game
         @sub?.daynightChanged? game
         alivePl = (game.players.filter (pl)=> !pl.dead).length
-        if @flag
+        if @cmplFlag
             return
         if alivePl <= 5 || (game.players.length / 3) >= alivePl
-            @setFlag "Awake"
+            @cmplFlag = "Awake"
             pl=game.getPlayer @id
             newpl = Player.factory null, game, pl, null, LowB
             pl.transProfile newpl
